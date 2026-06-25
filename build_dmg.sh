@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build MacCleaner.app (Swift + Python engine) + MacCleaner.dmg locally
+# Build MacCleaner.app (pure native Swift) + MacCleaner.dmg
+# No Python. No pip. No PyInstaller.
 # Usage: ./build_dmg.sh [version]
 set -euo pipefail
 
@@ -10,39 +11,11 @@ APP="$DIST_DIR/MacCleaner.app"
 DMG_NAME="MacCleaner-$VERSION.dmg"
 DMG_OUT="$DIST_DIR/$DMG_NAME"
 
-echo "==> MacCleaner build — v$VERSION"
+mkdir -p "$DIST_DIR"
 
-# ── 1. Ensure venv exists for Python engine ───────────────────────────────
-if [[ ! -f "$SCRIPT_DIR/.venv/bin/python" ]]; then
-  echo "    creating .venv..."
-  python3 -m venv "$SCRIPT_DIR/.venv"
-fi
+echo "==> MacCleaner build — v$VERSION (fully native Swift)"
 
-source "$SCRIPT_DIR/.venv/bin/activate"
-
-# ── 2. Install / upgrade Python deps (engine only — no PySide6) ──────────
-echo "==> Installing Python engine dependencies..."
-pip install -q --upgrade pip
-pip install -q \
-  "pyinstaller>=6" \
-  send2trash \
-  psutil \
-  pyobjc-framework-Cocoa
-
-pip install -q -e "$SCRIPT_DIR"
-
-# ── 3. Build Apple Intelligence bridge (maccleaner-ai, 131 KB) ──────────
-echo "==> Building Apple Intelligence bridge..."
-"$SCRIPT_DIR/swift-ai/build.sh"
-
-# ── 4. Build lean Python engine (9 MB, no PySide6) ──────────────────────
-echo "==> Building Python engine..."
-cd "$SCRIPT_DIR"
-pyinstaller engine.spec --noconfirm --clean
-
-echo "   Engine: $(du -sh "$DIST_DIR/maccleaner-engine" | cut -f1)"
-
-# ── 5. Build native Swift app (552 KB binary + 9 MB engine) ─────────────
+# ── 1. Build native Swift app ─────────────────────────────────────────────
 echo "==> Building native Swift app..."
 "$SCRIPT_DIR/swift-app/build.sh" --release
 
@@ -52,11 +25,11 @@ cp -R "$SWIFT_BUILD" "$APP"
 
 echo "   App: $(du -sh "$APP" | cut -f1)"
 
-# ── 6. Package into .dmg ─────────────────────────────────────────────────
+# ── 2. Package into .dmg ──────────────────────────────────────────────────
 echo "==> Creating DMG..."
 rm -f "$DMG_OUT"
 
-# Stage only MacCleaner.app — avoids bundling engine/old-DMGs from dist/
+# Stage only MacCleaner.app — avoids bundling stale files from dist/
 DMG_STAGE=$(mktemp -d)
 cp -R "$APP" "$DMG_STAGE/MacCleaner.app"
 

@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Build the Swift MacCleaner.app shell using swiftc (no full Xcode needed)
-# Embeds the lean Python engine binary (dist/maccleaner-engine)
-#
+# Build MacCleaner.app — fully native Swift, no Python, no pip.
 # Usage: ./build.sh [--release]
 set -euo pipefail
 
@@ -15,7 +13,6 @@ APP_BUNDLE="$BUILD_DIR/$APP_NAME.app"
 CONTENTS="$APP_BUNDLE/Contents"
 MACOS="$CONTENTS/MacOS"
 RESOURCES="$CONTENTS/Resources"
-ENGINE_BINARY="$ROOT/dist/maccleaner-engine"
 SWIFT_BIN="$MACOS/MacCleanerApp"
 
 # Prefer Xcode toolchain over CLT (needed for SwiftUI macros + FoundationModels)
@@ -42,6 +39,7 @@ FRAMEWORKS=(
     UserNotifications
     AppIntents
     FoundationModels
+    CryptoKit
 )
 
 FRAMEWORK_FLAGS=()
@@ -69,21 +67,8 @@ echo "==> Compiling Swift sources ($("$SWIFTC" --version 2>&1 | head -1))..."
 
 echo "   ✓ Swift binary: $(du -sh "$SWIFT_BIN" | cut -f1)"
 
-# Embed the Python engine
-if [[ -f "$ENGINE_BINARY" ]]; then
-    cp "$ENGINE_BINARY" "$MACOS/maccleaner-engine"
-    echo "   ✓ Python engine: $(du -sh "$MACOS/maccleaner-engine" | cut -f1)"
-else
-    echo "   ⚠️  maccleaner-engine not found — run from project root:"
-    echo "      .venv/bin/pyinstaller engine.spec --noconfirm --clean"
-fi
-
 echo "==> Signing (ad-hoc)..."
-# Use dev entitlements for ad-hoc signing (no Siri — that requires a real Developer ID cert)
 DEV_ENTITLEMENTS="$SCRIPT_DIR/MacCleaner-dev.entitlements"
-if [[ -f "$MACOS/maccleaner-engine" ]]; then
-    codesign --force --sign - "$MACOS/maccleaner-engine" 2>/dev/null || true
-fi
 codesign --force --sign - \
     --entitlements "$DEV_ENTITLEMENTS" \
     "$APP_BUNDLE"
@@ -91,6 +76,6 @@ codesign --force --sign - \
 echo ""
 echo "✅ Done: $APP_BUNDLE"
 APP_MB=$(du -sh "$APP_BUNDLE" | cut -f1)
-echo "   Total bundle size: $APP_MB  (engine + Swift binary)"
+echo "   Bundle size: $APP_MB  (pure Swift — no Python, no pip)"
 echo ""
 echo "To run: open \"$APP_BUNDLE\""
