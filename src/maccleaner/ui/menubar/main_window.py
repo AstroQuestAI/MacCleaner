@@ -169,6 +169,7 @@ class MainWindow(QWidget):
     storage_scan_requested = Signal()         # storage tab needs a scan
     storage_delete_requested = Signal(list)   # list[Path] to move to trash
     settings_saved = Signal(object)           # Settings instance after save
+    theme_preview  = Signal(str)              # theme key on every combo change
 
     def __init__(self, settings: Settings | None = None) -> None:
         super().__init__()
@@ -423,6 +424,7 @@ class MainWindow(QWidget):
     def _build_settings_page(self) -> QWidget:
         self._settings_panel = SettingsPanel(self._settings)
         self._settings_panel.settings_saved.connect(self.settings_saved)
+        self._settings_panel.theme_preview.connect(self.theme_preview)
         return self._settings_panel
 
     # ── Slots ──────────────────────────────────────────────────────────────

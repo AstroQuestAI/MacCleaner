@@ -22,7 +22,8 @@ _THEME_KEYS = {v: k for k, v in THEME_NAMES.items()}
 
 
 class SettingsPanel(QWidget):
-    settings_saved = Signal(object)   # emits a Settings instance
+    settings_saved = Signal(object)   # emits a Settings instance after save
+    theme_preview  = Signal(str)      # emits theme key on every combo change
 
     def __init__(self, settings: Settings, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -55,6 +56,9 @@ class SettingsPanel(QWidget):
             self._combo_row("Tray shows",  ["Free space", "Disk used %"], "_tray"),
             self._slider_row("Opacity",    70, 100,                        "_opacity"),
         ]))
+        self._theme.currentTextChanged.connect(
+            lambda name: self.theme_preview.emit(_THEME_KEYS.get(name, "glass"))
+        )
 
         v.addSpacing(6)
 

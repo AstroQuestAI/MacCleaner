@@ -131,6 +131,9 @@ class MacCleanerApp:
         self._window.storage_scan_requested.connect(self._start_storage_scan)
         self._window.storage_delete_requested.connect(self._start_storage_delete)
         self._window.settings_saved.connect(self._on_settings_saved)
+        self._window.theme_preview.connect(
+            lambda key: self._app.setStyleSheet(STYLESHEETS.get(key, STYLESHEETS["glass"]))
+        )
 
         # macOS hides NSPanels on deactivation; poll NSWindow.isVisible() and
         # call orderFrontRegardless() to keep the panel on screen.
