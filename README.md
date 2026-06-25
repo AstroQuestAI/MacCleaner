@@ -38,7 +38,17 @@
 
 ## 📸 Screenshots
 
-> *(Coming soon — beta screenshots dropping with v1.0 release)*
+<p align="center">
+  <img src="assets/screenshot-clean.png" width="280" alt="Clean tab — scan results showing 7.5 GB of junk found" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshot-storage.png" width="280" alt="Storage tab — largest folders and node_modules breakdown" />
+  &nbsp;&nbsp;
+  <img src="assets/screenshot-settings.png" width="280" alt="Settings tab — theme, scheduler, and scan options" />
+</p>
+
+<p align="center">
+  <em>Clean &nbsp;·&nbsp; Storage &nbsp;·&nbsp; Settings</em>
+</p>
 
 ---
 
