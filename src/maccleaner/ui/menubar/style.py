@@ -1,8 +1,8 @@
 """QSS stylesheets for MacCleaner.
 
-STYLESHEET_GLASS  — default frosted-glass look (Midnight Navy)
+STYLESHEET_GLASS  — original verbatim dark-navy glass (kept for reference)
 STYLESHEET_DARK   — flat opaque dark theme
-9 additional glass themes generated via _glass()
+10 glass themes generated via _glass() using Apple system color vocabulary
 THEME_NAMES       — ordered display-name → key mapping shown in Settings
 STYLESHEETS       — dict keyed by Settings.theme value
 """
@@ -223,140 +223,158 @@ def _glass(**t: str) -> str:
 
 
 # ── Theme token dicts ──────────────────────────────────────────────────────
+# All dark themes share: white text hierarchy (255,255,255 at 95%/67%/42%)
+# Light theme (Titanium) uses black text hierarchy on Apple system backgrounds
+# Each theme = one saturated Apple system accent + matching deep-tinted glass panel
 
-# ── ROSE QUARTZ — rich warm berry glass, cherry accents ───────────────────
-_ROSE = dict(
-    fg="rgba(28,4,12,245)",    fg2="rgba(75,22,40,228)",   fg3="rgba(128,68,88,205)",
-    fgt="rgba(15,0,6,252)",
-    bg0="rgba(242,162,198,240)", bg1="rgba(225,132,172,236)", bg2="rgba(208,105,150,232)",
-    hdr="rgba(255,198,228,125)", tab="rgba(248,178,215,100)",
-    bdt="rgba(255,255,255,215)", brd="rgba(205,108,148,75)", brh="rgba(175,55,95,118)",
-    acc="rgba(158,18,55,252)",  ac2="rgba(208,48,88,242)",
-    crd="rgba(255,210,232,162)", crh="rgba(255,192,220,195)",
-    sts="rgba(248,228,240,145)", cbo="rgba(252,208,228,182)", pop="rgba(255,220,238,250)",
-    trk="rgba(228,155,188,162)", div="rgba(210,128,162,130)", tof="rgba(218,145,178,220)",
-    bb="rgba(252,208,228,165)",  bh="rgba(245,188,215,200)",  bt="rgba(158,18,55,252)",
+# ── MIDNIGHT INDIGO — Apple Indigo #5E5CE6 on deep space glass ───────────
+_MIDNIGHT_INDIGO = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(28,24,52,240)",   bg1="rgba(18,15,38,235)",    bg2="rgba(10,8,25,232)",
+    hdr="rgba(94,92,230,38)",   tab="rgba(8,6,20,105)",
+    bdt="rgba(255,255,255,58)", brd="rgba(255,255,255,20)",  brh="rgba(94,92,230,65)",
+    acc="rgba(94,92,230,255)",  ac2="rgba(165,132,248,252)",
+    crd="rgba(44,40,72,162)",   crh="rgba(58,55,88,188)",
+    sts="rgba(8,6,20,145)",     cbo="rgba(38,35,65,172)",    pop="rgba(22,18,40,252)",
+    trk="rgba(44,40,72,175)",   div="rgba(255,255,255,15)",  tof="rgba(38,35,65,215)",
+    bb="rgba(38,35,65,165)",    bh="rgba(52,48,80,195)",     bt="rgba(165,132,248,245)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── SKY FROST — deep cerulean glass, cobalt accents ───────────────────────
-_SKY = dict(
-    fg="rgba(4,18,52,245)",    fg2="rgba(18,52,112,228)",  fg3="rgba(55,95,158,205)",
-    fgt="rgba(0,8,35,252)",
-    bg0="rgba(128,188,248,240)", bg1="rgba(95,162,242,236)", bg2="rgba(65,138,235,232)",
-    hdr="rgba(175,218,255,125)", tab="rgba(148,202,252,100)",
-    bdt="rgba(235,248,255,218)", brd="rgba(68,140,225,75)",  brh="rgba(22,95,208,118)",
-    acc="rgba(0,72,195,252)",   ac2="rgba(30,115,245,242)",
-    crd="rgba(185,222,255,162)", crh="rgba(165,210,255,195)",
-    sts="rgba(212,238,255,145)", cbo="rgba(175,218,255,182)", pop="rgba(198,230,255,250)",
-    trk="rgba(118,178,245,162)", div="rgba(88,155,232,130)",  tof="rgba(105,168,238,220)",
-    bb="rgba(175,218,255,165)",  bh="rgba(155,205,252,200)",  bt="rgba(0,72,195,252)",
+# ── INFRARED — Apple Pink #FF375F on deep crimson glass ────────────────────
+_INFRARED = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(88,18,38,240)",   bg1="rgba(65,12,26,235)",    bg2="rgba(42,6,16,232)",
+    hdr="rgba(255,55,95,35)",   tab="rgba(38,8,18,105)",
+    bdt="rgba(255,185,200,62)", brd="rgba(255,100,130,20)",  brh="rgba(255,55,95,58)",
+    acc="rgba(255,55,95,255)",  ac2="rgba(255,148,168,252)",
+    crd="rgba(105,25,45,162)",  crh="rgba(128,35,58,188)",
+    sts="rgba(28,6,14,145)",    cbo="rgba(82,18,35,172)",    pop="rgba(45,8,20,252)",
+    trk="rgba(88,25,45,175)",   div="rgba(255,100,130,20)",  tof="rgba(72,15,30,215)",
+    bb="rgba(82,18,35,165)",    bh="rgba(105,25,45,195)",    bt="rgba(255,148,168,245)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── FRESH MINT — jade glass, emerald accents ──────────────────────────────
-_MINT = dict(
-    fg="rgba(2,30,15,245)",    fg2="rgba(12,68,38,228)",   fg3="rgba(42,108,68,205)",
-    fgt="rgba(0,18,8,252)",
-    bg0="rgba(95,198,155,240)", bg1="rgba(68,178,128,236)", bg2="rgba(42,158,105,232)",
-    hdr="rgba(148,225,188,125)", tab="rgba(115,212,168,100)",
-    bdt="rgba(218,255,238,215)", brd="rgba(48,158,105,75)",  brh="rgba(15,118,72,118)",
-    acc="rgba(0,108,62,252)",   ac2="rgba(28,155,95,242)",
-    crd="rgba(178,238,208,162)", crh="rgba(158,228,195,195)",
-    sts="rgba(205,245,225,145)", cbo="rgba(165,232,202,182)", pop="rgba(185,242,215,250)",
-    trk="rgba(85,182,138,162)", div="rgba(58,158,112,130)",   tof="rgba(72,172,128,220)",
-    bb="rgba(165,232,202,165)",  bh="rgba(145,222,188,200)",  bt="rgba(0,108,62,252)",
+# ── PACIFIC BLUE — Apple Blue #0A84FF · iPhone 12 Pro ocean glass ─────────
+_PACIFIC_BLUE = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(0,58,110,240)",   bg1="rgba(0,40,80,235)",     bg2="rgba(0,22,52,232)",
+    hdr="rgba(10,132,255,35)",  tab="rgba(0,18,42,105)",
+    bdt="rgba(165,215,255,62)", brd="rgba(100,180,255,20)",  brh="rgba(10,132,255,58)",
+    acc="rgba(10,132,255,255)", ac2="rgba(100,210,255,252)",
+    crd="rgba(0,52,100,162)",   crh="rgba(0,68,118,188)",
+    sts="rgba(0,12,32,145)",    cbo="rgba(0,40,78,172)",     pop="rgba(0,18,42,252)",
+    trk="rgba(0,52,100,175)",   div="rgba(100,180,255,20)",  tof="rgba(0,32,62,215)",
+    bb="rgba(0,40,78,165)",     bh="rgba(0,55,98,195)",      bt="rgba(100,210,255,245)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── PEACH GLOW — warm amber glass, burnt-orange accents ──────────────────
-_PEACH = dict(
-    fg="rgba(35,10,0,245)",    fg2="rgba(88,35,5,228)",    fg3="rgba(145,82,35,205)",
-    fgt="rgba(20,4,0,252)",
-    bg0="rgba(248,175,108,240)", bg1="rgba(240,152,78,236)", bg2="rgba(232,128,52,232)",
-    hdr="rgba(255,210,155,125)", tab="rgba(252,192,128,100)",
-    bdt="rgba(255,248,228,215)", brd="rgba(222,138,65,75)",  brh="rgba(195,95,22,118)",
-    acc="rgba(168,55,0,252)",   ac2="rgba(218,88,18,242)",
-    crd="rgba(255,215,172,162)", crh="rgba(255,200,148,195)",
-    sts="rgba(255,238,215,145)", cbo="rgba(255,210,165,182)", pop="rgba(255,225,185,250)",
-    trk="rgba(235,165,88,162)", div="rgba(215,138,58,130)",  tof="rgba(228,155,75,220)",
-    bb="rgba(255,210,165,165)",  bh="rgba(252,195,142,200)",  bt="rgba(168,55,0,252)",
-    cbf="rgba(255,255,255,242)",
-)
-
-# ── LAVENDER DREAM — deep violet glass, vivid purple accents ─────────────
-_LAVENDER = dict(
-    fg="rgba(18,4,42,245)",    fg2="rgba(55,22,108,228)",  fg3="rgba(102,62,162,205)",
-    fgt="rgba(8,0,28,252)",
-    bg0="rgba(178,128,242,240)", bg1="rgba(155,102,232,236)", bg2="rgba(132,78,222,232)",
-    hdr="rgba(215,178,255,125)", tab="rgba(195,152,248,100)",
-    bdt="rgba(245,228,255,218)", brd="rgba(148,88,225,78)",  brh="rgba(112,45,205,118)",
-    acc="rgba(88,18,198,252)",  ac2="rgba(138,58,242,242)",
-    crd="rgba(215,188,255,162)", crh="rgba(200,168,252,195)",
-    sts="rgba(232,215,255,145)", cbo="rgba(208,182,252,182)", pop="rgba(222,200,255,250)",
-    trk="rgba(162,118,238,162)", div="rgba(138,92,222,130)",  tof="rgba(148,105,228,220)",
-    bb="rgba(208,182,252,165)",  bh="rgba(192,162,248,200)",  bt="rgba(88,18,198,252)",
+# ── MIDNIGHT GREEN — Apple Green #30D158 · iPhone 11 Pro forest glass ──────
+_MIDNIGHT_GREEN = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(0,58,45,240)",    bg1="rgba(0,40,30,235)",     bg2="rgba(0,22,18,232)",
+    hdr="rgba(48,209,88,35)",   tab="rgba(0,18,14,105)",
+    bdt="rgba(148,240,178,62)", brd="rgba(80,215,122,20)",   brh="rgba(48,209,88,58)",
+    acc="rgba(48,209,88,255)",  ac2="rgba(148,240,178,252)",
+    crd="rgba(0,52,40,162)",    crh="rgba(0,68,52,188)",
+    sts="rgba(0,12,10,145)",    cbo="rgba(0,40,30,172)",     pop="rgba(0,18,14,252)",
+    trk="rgba(0,52,40,175)",    div="rgba(80,215,122,20)",   tof="rgba(0,32,24,215)",
+    bb="rgba(0,40,30,165)",     bh="rgba(0,55,42,195)",      bt="rgba(148,240,178,245)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── SAGE BREEZE — deep eucalyptus glass, forest accents ──────────────────
-_SAGE = dict(
-    fg="rgba(4,22,8,245)",     fg2="rgba(18,62,28,228)",   fg3="rgba(52,102,62,205)",
-    fgt="rgba(0,12,4,252)",
-    bg0="rgba(88,158,105,240)", bg1="rgba(65,138,82,236)",  bg2="rgba(45,118,62,232)",
-    hdr="rgba(128,195,148,125)", tab="rgba(105,178,125,100)",
-    bdt="rgba(208,242,218,215)", brd="rgba(48,118,65,78)",   brh="rgba(18,88,38,118)",
-    acc="rgba(12,88,35,252)",   ac2="rgba(40,132,65,242)",
-    crd="rgba(165,222,182,162)", crh="rgba(145,210,165,195)",
-    sts="rgba(195,235,205,145)", cbo="rgba(155,215,172,182)", pop="rgba(175,228,190,250)",
-    trk="rgba(72,148,92,162)",  div="rgba(48,118,68,130)",   tof="rgba(60,132,78,220)",
-    bb="rgba(155,215,172,165)",  bh="rgba(138,205,158,200)",  bt="rgba(12,88,35,252)",
+# ── DESERT SUNSET — Apple Orange #FF9F0A · macOS Sequoia warm amber glass ──
+_DESERT_SUNSET = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(95,38,8,240)",    bg1="rgba(72,25,4,235)",     bg2="rgba(48,15,2,232)",
+    hdr="rgba(255,159,10,35)",  tab="rgba(42,18,2,105)",
+    bdt="rgba(255,222,148,62)", brd="rgba(255,178,80,20)",   brh="rgba(255,159,10,58)",
+    acc="rgba(255,159,10,255)", ac2="rgba(255,222,100,252)",
+    crd="rgba(105,48,12,162)",  crh="rgba(128,62,16,188)",
+    sts="rgba(28,12,2,145)",    cbo="rgba(78,38,8,172)",     pop="rgba(42,18,2,252)",
+    trk="rgba(88,42,10,175)",   div="rgba(255,178,80,20)",   tof="rgba(62,28,5,215)",
+    bb="rgba(78,38,8,165)",     bh="rgba(100,50,12,195)",    bt="rgba(255,222,100,245)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── ARCTIC ICE — luminous white-blue glass, deep-navy accents ────────────
-_ARCTIC = dict(
-    fg="rgba(2,14,42,245)",    fg2="rgba(12,42,92,228)",   fg3="rgba(42,82,138,205)",
-    fgt="rgba(0,6,28,252)",
-    bg0="rgba(198,228,255,242)", bg1="rgba(178,215,252,238)", bg2="rgba(158,202,250,235)",
-    hdr="rgba(235,248,255,130)", tab="rgba(218,240,255,108)",
-    bdt="rgba(255,255,255,235)", brd="rgba(88,158,232,80)",   brh="rgba(18,98,215,120)",
-    acc="rgba(0,60,182,252)",   ac2="rgba(22,105,238,242)",
-    crd="rgba(228,244,255,168)", crh="rgba(210,235,255,200)",
-    sts="rgba(240,250,255,150)", cbo="rgba(222,242,255,188)", pop="rgba(232,246,255,252)",
-    trk="rgba(155,208,252,168)", div="rgba(118,188,245,135)",  tof="rgba(138,198,248,225)",
-    bb="rgba(222,242,255,170)",  bh="rgba(205,232,252,205)",  bt="rgba(0,60,182,252)",
+# ── DEEP PURPLE — Apple Purple #BF5AF2 · space violet glass ───────────────
+_DEEP_PURPLE = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(52,18,80,240)",   bg1="rgba(38,12,58,235)",    bg2="rgba(24,6,40,232)",
+    hdr="rgba(191,90,242,38)",  tab="rgba(22,8,38,105)",
+    bdt="rgba(228,178,255,62)", brd="rgba(200,128,255,20)",  brh="rgba(191,90,242,58)",
+    acc="rgba(191,90,242,255)", ac2="rgba(218,148,250,252)",
+    crd="rgba(62,22,92,162)",   crh="rgba(80,30,112,188)",
+    sts="rgba(15,5,26,145)",    cbo="rgba(48,18,72,172)",    pop="rgba(28,8,45,252)",
+    trk="rgba(58,22,82,175)",   div="rgba(200,128,255,20)",  tof="rgba(38,12,58,215)",
+    bb="rgba(48,18,72,165)",    bh="rgba(65,25,95,195)",     bt="rgba(218,148,250,245)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── CHAMPAGNE GOLD — warm cognac glass, burnished-bronze accents ──────────
-_CHAMPAGNE = dict(
-    fg="rgba(25,12,0,245)",    fg2="rgba(72,42,5,228)",    fg3="rgba(128,88,28,205)",
-    fgt="rgba(12,5,0,252)",
-    bg0="rgba(232,195,108,240)", bg1="rgba(218,172,78,236)", bg2="rgba(205,150,50,232)",
-    hdr="rgba(255,228,145,125)", tab="rgba(245,210,118,100)",
-    bdt="rgba(255,252,228,218)", brd="rgba(198,158,48,78)",   brh="rgba(162,118,8,118)",
-    acc="rgba(128,78,0,252)",   ac2="rgba(188,128,12,242)",
-    crd="rgba(255,232,155,165)", crh="rgba(252,218,128,198)",
-    sts="rgba(252,242,208,148)", cbo="rgba(248,228,148,185)", pop="rgba(255,238,168,252)",
-    trk="rgba(218,178,72,165)", div="rgba(195,152,42,132)",   tof="rgba(208,165,58,222)",
-    bb="rgba(248,228,148,168)",  bh="rgba(242,215,125,202)",  bt="rgba(128,78,0,252)",
+# ── OLIVE NIGHT — Apple Yellow #FFD60A · dark warm olive glass ────────────
+_OLIVE_NIGHT = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(45,42,15,240)",   bg1="rgba(32,30,10,235)",    bg2="rgba(18,17,5,232)",
+    hdr="rgba(255,214,10,30)",  tab="rgba(18,17,5,105)",
+    bdt="rgba(255,240,130,62)", brd="rgba(200,188,60,20)",   brh="rgba(255,214,10,55)",
+    acc="rgba(255,214,10,255)", ac2="rgba(255,240,130,252)",
+    crd="rgba(52,50,18,162)",   crh="rgba(68,65,25,188)",
+    sts="rgba(10,10,3,145)",    cbo="rgba(40,38,12,172)",    pop="rgba(22,20,6,252)",
+    trk="rgba(48,45,15,175)",   div="rgba(200,188,60,20)",   tof="rgba(30,28,8,215)",
+    bb="rgba(40,38,12,165)",    bh="rgba(55,52,18,195)",     bt="rgba(255,240,130,245)",
+    cbf="rgba(25,20,0,252)",
+)
+
+# ── TITANIUM — Apple light system colors #F2F2F7 · only light theme ───────
+_TITANIUM = dict(
+    fg="rgba(0,0,0,218)",        fg2="rgba(0,0,0,142)",       fg3="rgba(0,0,0,82)",
+    fgt="rgba(0,0,0,235)",
+    bg0="rgba(242,242,247,242)", bg1="rgba(229,229,234,238)", bg2="rgba(216,216,221,235)",
+    hdr="rgba(255,255,255,158)", tab="rgba(232,232,237,115)",
+    bdt="rgba(255,255,255,245)", brd="rgba(0,0,0,20)",         brh="rgba(94,92,230,85)",
+    acc="rgba(94,92,230,255)",   ac2="rgba(155,122,245,248)",
+    crd="rgba(255,255,255,172)", crh="rgba(255,255,255,218)",
+    sts="rgba(209,209,214,148)", cbo="rgba(255,255,255,188)",  pop="rgba(242,242,247,252)",
+    trk="rgba(199,199,204,172)", div="rgba(0,0,0,15)",          tof="rgba(188,188,192,215)",
+    bb="rgba(255,255,255,175)",  bh="rgba(255,255,255,225)",   bt="rgba(94,92,230,252)",
     cbf="rgba(255,255,255,252)",
 )
 
-# ── NEON EDGE — obsidian glass, electric cyan × vivid magenta ────────────
-_NEON = dict(
-    fg="rgba(185,255,232,245)", fg2="rgba(108,225,188,225)", fg3="rgba(62,165,132,200)",
-    fgt="rgba(220,255,245,255)",
-    bg0="rgba(6,2,18,232)",    bg1="rgba(10,3,28,228)",    bg2="rgba(4,0,14,235)",
-    hdr="rgba(0,255,178,30)",   tab="rgba(3,0,10,108)",
-    bdt="rgba(0,255,195,88)",   brd="rgba(0,188,142,52)",   brh="rgba(0,245,182,82)",
-    acc="rgba(0,242,182,255)",  ac2="rgba(180,0,255,252)",
-    crd="rgba(0,22,16,172)",    crh="rgba(0,35,26,205)",
-    sts="rgba(2,0,8,148)",      cbo="rgba(0,18,14,188)",    pop="rgba(0,15,11,252)",
-    trk="rgba(0,48,36,165)",    div="rgba(0,135,102,112)",  tof="rgba(0,42,32,218)",
-    bb="rgba(0,18,14,175)",     bh="rgba(0,32,24,208)",     bt="rgba(0,242,182,252)",
-    cbf="rgba(4,14,10,252)",
+# ── ROSE GOLD — Apple rose-gold warm bronze metallic glass ────────────────
+_ROSE_GOLD = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(88,55,18,240)",   bg1="rgba(65,38,8,235)",     bg2="rgba(42,22,2,232)",
+    hdr="rgba(255,188,60,32)",  tab="rgba(38,22,2,105)",
+    bdt="rgba(255,232,148,62)", brd="rgba(200,155,45,20)",   brh="rgba(255,188,60,58)",
+    acc="rgba(255,188,60,255)", ac2="rgba(255,228,128,252)",
+    crd="rgba(100,65,20,162)",  crh="rgba(122,80,28,188)",
+    sts="rgba(25,15,2,145)",    cbo="rgba(72,48,12,172)",    pop="rgba(40,25,2,252)",
+    trk="rgba(82,55,15,175)",   div="rgba(200,155,45,20)",   tof="rgba(58,38,8,215)",
+    bb="rgba(72,48,12,165)",    bh="rgba(95,62,18,195)",     bt="rgba(255,232,128,245)",
+    cbf="rgba(255,255,255,252)",
+)
+
+# ── ECLIPSE — Apple true-dark #1C1C1E + indigo/purple · Raycast-inspired ──
+_ECLIPSE = dict(
+    fg="rgba(255,255,255,242)",  fg2="rgba(255,255,255,172)",  fg3="rgba(255,255,255,108)",
+    fgt="rgba(255,255,255,255)",
+    bg0="rgba(28,28,30,245)",   bg1="rgba(35,32,45,242)",    bg2="rgba(22,22,25,248)",
+    hdr="rgba(94,92,230,28)",   tab="rgba(18,18,20,112)",
+    bdt="rgba(255,255,255,35)", brd="rgba(255,255,255,15)",  brh="rgba(191,90,242,68)",
+    acc="rgba(191,90,242,255)", ac2="rgba(94,92,230,252)",
+    crd="rgba(44,44,46,168)",   crh="rgba(58,58,60,198)",
+    sts="rgba(15,15,17,148)",   cbo="rgba(44,44,46,182)",    pop="rgba(28,28,30,252)",
+    trk="rgba(58,58,60,178)",   div="rgba(255,255,255,12)",  tof="rgba(58,58,60,215)",
+    bb="rgba(44,44,46,172)",    bh="rgba(58,58,60,202)",     bt="rgba(218,148,250,245)",
+    cbf="rgba(255,255,255,252)",
 )
 
 
@@ -1100,15 +1118,16 @@ QSlider::sub-page:horizontal {
 
 # ── Generated themes ───────────────────────────────────────────────────────
 
-STYLESHEET_ROSE       = _glass(**_ROSE)
-STYLESHEET_SKY        = _glass(**_SKY)
-STYLESHEET_MINT       = _glass(**_MINT)
-STYLESHEET_PEACH      = _glass(**_PEACH)
-STYLESHEET_LAVENDER   = _glass(**_LAVENDER)
-STYLESHEET_SAGE       = _glass(**_SAGE)
-STYLESHEET_ARCTIC     = _glass(**_ARCTIC)
-STYLESHEET_CHAMPAGNE  = _glass(**_CHAMPAGNE)
-STYLESHEET_NEON       = _glass(**_NEON)
+STYLESHEET_MIDNIGHT_INDIGO = _glass(**_MIDNIGHT_INDIGO)
+STYLESHEET_INFRARED        = _glass(**_INFRARED)
+STYLESHEET_PACIFIC_BLUE    = _glass(**_PACIFIC_BLUE)
+STYLESHEET_MIDNIGHT_GREEN  = _glass(**_MIDNIGHT_GREEN)
+STYLESHEET_DESERT_SUNSET   = _glass(**_DESERT_SUNSET)
+STYLESHEET_DEEP_PURPLE     = _glass(**_DEEP_PURPLE)
+STYLESHEET_OLIVE_NIGHT     = _glass(**_OLIVE_NIGHT)
+STYLESHEET_TITANIUM        = _glass(**_TITANIUM)
+STYLESHEET_ROSE_GOLD       = _glass(**_ROSE_GOLD)
+STYLESHEET_ECLIPSE         = _glass(**_ECLIPSE)
 
 
 # ── Theme registry ─────────────────────────────────────────────────────────
@@ -1116,30 +1135,30 @@ STYLESHEET_NEON       = _glass(**_NEON)
 # Ordered: shown in Settings combobox exactly as listed here.
 # Key = Settings.theme value stored in settings.json
 THEME_NAMES: dict[str, str] = {
-    "glass":     "Midnight Navy",    # dark glass (default)
-    "rose":      "Rose Quartz",      # light · warm pink
-    "sky":       "Sky Frost",        # light · cool blue
-    "mint":      "Fresh Mint",       # light · mint green
-    "peach":     "Peach Glow",       # light · warm peach
-    "lavender":  "Lavender Dream",   # light · soft purple
-    "sage":      "Sage Breeze",      # light · earthy green
-    "arctic":    "Arctic Ice",       # light · icy white
-    "champagne": "Champagne Gold",   # light · warm gold
-    "neon":      "Neon Edge",        # vivid · electric
-    "dark":      "Flat Dark",        # opaque dark (legacy)
+    "glass":     "Midnight Indigo",   # Apple Indigo on deep space glass (default)
+    "rose":      "Infrared",          # Apple Pink on deep crimson glass
+    "sky":       "Pacific Blue",      # Apple Blue · iPhone 12 Pro ocean glass
+    "mint":      "Midnight Green",    # Apple Green · iPhone 11 Pro forest glass
+    "peach":     "Desert Sunset",     # Apple Orange · macOS Sequoia amber glass
+    "lavender":  "Deep Purple",       # Apple Purple · space violet glass
+    "sage":      "Olive Night",       # Apple Yellow · dark warm olive glass
+    "arctic":    "Titanium",          # light · Apple system silver backgrounds
+    "champagne": "Rose Gold",         # Apple rose-gold warm metallic glass
+    "neon":      "Eclipse",           # Apple true-dark + indigo/purple
+    "dark":      "Flat Dark",         # opaque dark (legacy)
 }
 
 STYLESHEETS: dict[str, str] = {
-    "glass":     STYLESHEET_GLASS,
-    "rose":      STYLESHEET_ROSE,
-    "sky":       STYLESHEET_SKY,
-    "mint":      STYLESHEET_MINT,
-    "peach":     STYLESHEET_PEACH,
-    "lavender":  STYLESHEET_LAVENDER,
-    "sage":      STYLESHEET_SAGE,
-    "arctic":    STYLESHEET_ARCTIC,
-    "champagne": STYLESHEET_CHAMPAGNE,
-    "neon":      STYLESHEET_NEON,
+    "glass":     STYLESHEET_MIDNIGHT_INDIGO,
+    "rose":      STYLESHEET_INFRARED,
+    "sky":       STYLESHEET_PACIFIC_BLUE,
+    "mint":      STYLESHEET_MIDNIGHT_GREEN,
+    "peach":     STYLESHEET_DESERT_SUNSET,
+    "lavender":  STYLESHEET_DEEP_PURPLE,
+    "sage":      STYLESHEET_OLIVE_NIGHT,
+    "arctic":    STYLESHEET_TITANIUM,
+    "champagne": STYLESHEET_ROSE_GOLD,
+    "neon":      STYLESHEET_ECLIPSE,
     "dark":      STYLESHEET_DARK,
 }
 

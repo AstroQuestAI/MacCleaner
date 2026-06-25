@@ -31,7 +31,7 @@
 | ⏰ **Background Auto-scan** | Runs on a configurable schedule (1 h – 24 h) and alerts only when disk usage crosses your threshold |
 | 🔔 **Threshold Alerts** | Separate warn (amber) and critical (red) thresholds — tray icon changes colour so you always know at a glance |
 | ⚙️ **Full Settings Panel** | Theme, tray label, alert thresholds, scan interval, startup delay — all configurable without touching a config file |
-| 🪟 **Glass Theme** | Frosted-glass UI that floats above other windows without cluttering your Dock |
+| 🎨 **10 Premium Themes** | Apple-system-color glass themes — Midnight Indigo, Pacific Blue, Midnight Green, Deep Purple, Eclipse, and more |
 | 🗑️ **Safe Deletion** | Moves files to macOS Trash, never hard-deletes — one undo if you change your mind |
 
 ---
@@ -99,11 +99,46 @@ This registers MacCleaner as a macOS Launch Agent so it starts silently at login
 
 ---
 
+## 🎨 Themes
+
+10 glass themes built on Apple's system color vocabulary — each with one vivid Apple system accent on a deep-tinted glass panel. Theme changes apply instantly (no Save required).
+
+<p align="center">
+  <img src="assets/screenshot-theme-glass.png" width="160" alt="Midnight Indigo" />
+  <img src="assets/screenshot-theme-rose.png" width="160" alt="Infrared" />
+  <img src="assets/screenshot-theme-sky.png" width="160" alt="Pacific Blue" />
+  <img src="assets/screenshot-theme-mint.png" width="160" alt="Midnight Green" />
+  <img src="assets/screenshot-theme-peach.png" width="160" alt="Desert Sunset" />
+</p>
+
+<p align="center">
+  <img src="assets/screenshot-theme-lavender.png" width="160" alt="Deep Purple" />
+  <img src="assets/screenshot-theme-sage.png" width="160" alt="Olive Night" />
+  <img src="assets/screenshot-theme-arctic.png" width="160" alt="Titanium" />
+  <img src="assets/screenshot-theme-champagne.png" width="160" alt="Rose Gold" />
+  <img src="assets/screenshot-theme-neon.png" width="160" alt="Eclipse" />
+</p>
+
+| Theme | Accent |
+|---|---|
+| Midnight Indigo _(default)_ | Apple Indigo |
+| Infrared | Apple Pink |
+| Pacific Blue | Apple Blue |
+| Midnight Green | Apple Green |
+| Desert Sunset | Apple Orange |
+| Deep Purple | Apple Purple |
+| Olive Night | Apple Yellow |
+| Titanium | Light silver (only light theme) |
+| Rose Gold | Warm bronze-gold |
+| Eclipse | Apple true-dark + Purple |
+
+---
+
 ## ⚙️ Settings
 
 Open the panel → click **⚙️** → configure:
 
-- **Theme** — Glass (default) or Dark
+- **Theme** — 10 glass themes + Flat Dark legacy
 - **Tray label** — Free space or Disk used %
 - **Auto-scan** — on/off + interval (1 h / 2 h / 6 h / 12 h / 24 h)
 - **Alert threshold** — popup only appears when disk ≥ your chosen %

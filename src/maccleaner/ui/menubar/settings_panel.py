@@ -184,7 +184,7 @@ class SettingsPanel(QWidget):
 
     def _load_values(self) -> None:
         s = self._settings
-        self._theme.setCurrentText(THEME_NAMES.get(s.theme, "Midnight Navy"))
+        self._theme.setCurrentText(THEME_NAMES.get(s.theme, "Midnight Indigo"))
         self._tray.setCurrentIndex(0 if s.tray_label == "free" else 1)
         self._opacity_slider.setValue(s.opacity)
         self._opacity_val.setText(f"{s.opacity}%")
