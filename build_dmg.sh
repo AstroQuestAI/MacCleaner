@@ -47,6 +47,7 @@ echo "==> Building native Swift app..."
 "$SCRIPT_DIR/swift-app/build.sh" --release
 
 SWIFT_BUILD="$SCRIPT_DIR/swift-app/.build/MacCleaner.app"
+rm -rf "$APP"
 cp -R "$SWIFT_BUILD" "$APP"
 
 echo "   App: $(du -sh "$APP" | cut -f1)"
@@ -54,6 +55,10 @@ echo "   App: $(du -sh "$APP" | cut -f1)"
 # ── 6. Package into .dmg ─────────────────────────────────────────────────
 echo "==> Creating DMG..."
 rm -f "$DMG_OUT"
+
+# Stage only MacCleaner.app — avoids bundling engine/old-DMGs from dist/
+DMG_STAGE=$(mktemp -d)
+cp -R "$APP" "$DMG_STAGE/MacCleaner.app"
 
 create-dmg \
   --volname "MacCleaner" \
@@ -67,7 +72,9 @@ create-dmg \
   --background "assets/dmg_background.png" \
   --no-internet-enable \
   "$DMG_OUT" \
-  "$DIST_DIR/"
+  "$DMG_STAGE/"
+
+rm -rf "$DMG_STAGE"
 
 echo ""
 echo "✅ Done!"
