@@ -1,0 +1,104 @@
+name: Build & Release DMG
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-dmg:
+    runs-on: macos-15   # Xcode 16+ with macOS 26 SDK for FoundationModels
+    permissions:
+      contents: write   # needed to create GitHub Releases
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Install Python engine dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+          pip install \
+            "pyinstaller>=6" \
+            send2trash \
+            psutil \
+            pyobjc-framework-Cocoa
+          pip install -e .
+
+      - name: Build Apple Intelligence bridge
+        run: |
+          chmod +x swift-ai/build.sh
+          swift-ai/build.sh
+
+      - name: Build lean Python engine
+        run: |
+          source .venv/bin/activate
+          pyinstaller engine.spec --noconfirm --clean
+
+      - name: Build native Swift app
+        run: |
+          chmod +x swift-app/build.sh
+          swift-app/build.sh --release
+
+      - name: Stage app bundle
+        run: cp -R swift-app/.build/MacCleaner.app dist/MacCleaner.app
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Package as .dmg
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          DMG="dist/MacCleaner-${VERSION}.dmg"
+          create-dmg \
+            --volname "MacCleaner" \
+            --volicon "assets/MacCleaner.icns" \
+            --window-pos 200 120 \
+            --window-size 600 400 \
+            --icon-size 100 \
+            --icon "MacCleaner.app" 150 180 \
+            --hide-extension "MacCleaner.app" \
+            --app-drop-link 450 180 \
+            --background "assets/dmg_background.png" \
+            --no-internet-enable \
+            "$DMG" \
+            "dist/"
+          echo "DMG_PATH=$DMG" >> "$GITHUB_ENV"
+          echo "DMG_NAME=MacCleaner-${VERSION}.dmg" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "MacCleaner ${{ github.ref_name }}"
+          body: |
+            ## MacCleaner ${{ github.ref_name }}
+
+            **macOS 26+ required** (Apple Silicon · Apple Intelligence on-device)
+
+            ### Install
+            1. Download `MacCleaner-${{ steps.version.outputs.VERSION }}.dmg`
+            2. Open the DMG and drag **MacCleaner** to **Applications**
+            3. Launch from Applications — it lives in your menu bar
+
+            ### What's included
+            - **Native Swift app** — 9.8 MB total (vs 460 MB Python build)
+            - **Apple Intelligence chat** — on-device AI assistant, private & free
+            - **Siri intents** — "Scan my Mac", "Check storage", "Clean caches"
+            - **14+ junk scanners** — caches, logs, Xcode artifacts, duplicates & more
+
+            ### What's new
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
+          files: ${{ env.DMG_PATH }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}

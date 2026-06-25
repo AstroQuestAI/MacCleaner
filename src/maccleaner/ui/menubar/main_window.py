@@ -93,6 +93,19 @@ class CategoryRowWidget(QWidget):
         if has_files:
             self._size_label.setObjectName("CatSize")
             self._size_label.setText(fmt_size(result.total_size))
+            # Fetch AI tooltip asynchronously — does not block UI
+            import threading
+            from ...services.ai_service import explain_category, is_available as ai_available
+            if ai_available():
+                cat_name  = result.category.value
+                size_mb   = result.total_size_mb
+                count     = result.count
+                widget    = self
+                def _fetch():
+                    tip = explain_category(cat_name, size_mb, count)
+                    if tip:
+                        widget.setToolTip(tip)
+                threading.Thread(target=_fetch, daemon=True).start()
         else:
             self._size_label.setObjectName("CatSizeClean")
             self._size_label.setText("Clean ✓" if result.error is None else "—")
@@ -434,8 +447,41 @@ class MainWindow(QWidget):
         self.scan_requested.emit()
 
     def _on_clean_clicked(self) -> None:
+        from PySide6.QtWidgets import QMessageBox
+        from ...services.ai_service import advise_before_clean, is_available as ai_available
+
         selected = [cat for cat, row in self._row_widgets.items() if row.is_checked]
-        self.clean_requested.emit(selected or [])
+        if not selected:
+            return
+
+        # Get AI safety advice synchronously (fast, <2s on-device)
+        total_gb = 0.0
+        if self._report:
+            total_gb = sum(
+                (self._report.result_for(cat) or type("", (), {"total_size": 0})()).total_size
+                for cat in selected
+            ) / 1024 ** 3
+
+        cat_names = [c.value for c in selected]
+        advice = advise_before_clean(cat_names, total_gb) if ai_available() else None
+
+        if advice:
+            box = QMessageBox(self)
+            box.setWindowTitle("MacCleaner — AI Safety Check")
+            box.setText(f"<b>✦ Apple Intelligence:</b><br><br>{advice}")
+            box.setInformativeText(
+                f"Moving {fmt_size(int(total_gb * 1024**3))} to Trash. "
+                "Nothing is permanently deleted until you empty Trash."
+            )
+            box.setStandardButtons(
+                QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel
+            )
+            box.setDefaultButton(QMessageBox.StandardButton.Ok)
+            box.button(QMessageBox.StandardButton.Ok).setText("Clean →")
+            if box.exec() != QMessageBox.StandardButton.Ok:
+                return
+
+        self.clean_requested.emit(selected)
 
     def _update_total(self) -> None:
         if self._report is None:
@@ -478,6 +524,25 @@ class MainWindow(QWidget):
         self._status_dot.setStyleSheet("color: #7c3aed;")
         self._status_text.setText(f"Found {fmt_size(report.total_size)} to clean")
         self._status_progress.hide()
+
+    def set_ai_summary(self, summary: str) -> None:
+        """Display an Apple Intelligence-generated scan summary below the status bar."""
+        if hasattr(self, "_ai_label"):
+            self._ai_label.setText(f"✦ {summary}")
+            self._ai_label.show()
+        else:
+            from PySide6.QtWidgets import QLabel
+            lbl = QLabel(f"✦ {summary}", self)
+            lbl.setWordWrap(True)
+            lbl.setStyleSheet(
+                "color: #7c3aed; font-size: 11px; padding: 6px 12px;"
+                "background: #f5f0ff; border-radius: 8px; margin: 4px 12px;"
+            )
+            lbl.setObjectName("ai_summary")
+            # Insert after status bar — find the clean tab layout
+            if hasattr(self, "_clean_tab") and self._clean_tab.layout():
+                self._clean_tab.layout().insertWidget(1, lbl)
+            self._ai_label = lbl
 
     def on_scan_error(self, msg: str) -> None:
         self._scan_btn.setEnabled(True)

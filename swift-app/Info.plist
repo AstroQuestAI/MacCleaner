@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>MacCleaner</string>
+    <key>CFBundleDisplayName</key>
+    <string>MacCleaner</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.astroquestai.maccleaner</string>
+    <key>CFBundleVersion</key>
+    <string>2.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>2.0</string>
+    <key>CFBundleExecutable</key>
+    <string>MacCleanerApp</string>
+    <key>CFBundleIconFile</key>
+    <string>MacCleaner</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2025 AstroQuestAI</string>
+    <!-- Required for App Intents / Siri -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+    <key>INIntentsSupported</key>
+    <array/>
+</dict>
+</plist>

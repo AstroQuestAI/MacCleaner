@@ -14,6 +14,12 @@ from PySide6.QtWidgets import QApplication, QSystemTrayIcon
 from ...config import Settings
 from ...models.scan_result import ScanReport
 from ...services.cleaner_service import CleanerService
+from ...services.notification_service import (
+    notify_scan_result, notify_disk_pressure, request_permission,
+)
+from ...services.ai_service import (
+    summarize_scan, generate_notification_text, is_available as ai_available,
+)
 from .main_window import MainWindow
 from .style import STYLESHEETS
 from .workers import CleanWorker, ScanWorker, StorageScanWorker, StorageDeleteWorker
@@ -243,15 +249,37 @@ class MacCleanerApp:
     def _handle_scan_result(self, report: ScanReport, *, notify: bool) -> None:
         junk = report.total_size
         pct, _ = _disk_usage()
+
+        # AI-generated scan summary — shown in the window subtitle area
+        if ai_available() and junk > 0:
+            from PySide6.QtCore import QThread, Signal as _Sig
+            import threading
+            def _ai_summarize():
+                summary = summarize_scan(report)
+                if summary and hasattr(self._window, "set_ai_summary"):
+                    self._window.set_ai_summary(summary)
+            threading.Thread(target=_ai_summarize, daemon=True).start()
+
         # Only alert when storage is running low AND there is meaningful junk.
         if junk >= self._junk_min_bytes and pct >= self._notify_above_pct:
             self._show_junk_overlay(junk)
             if notify:
+                # AI-personalised notification text (falls back to default)
+                ai_body = None
+                if ai_available():
+                    ai_body = generate_notification_text(report)
+                body = ai_body or f"Found {_fmt_size(junk)} to clean — click to review"
+
                 self._tray.showMessage(
-                    "MacCleaner",
-                    f"Found {_fmt_size(junk)} to clean — click to review",
+                    "MacCleaner", body,
                     QSystemTrayIcon.MessageIcon.Information, 6000,
                 )
+                notify_scan_result(
+                    freed_gb=junk / 1024 ** 3,
+                    junk_gb=junk / 1024 ** 3,
+                )
+                if pct >= 85:
+                    notify_disk_pressure(free_pct=100 - pct)
         else:
             self._refresh_disk_status()
 
@@ -387,5 +415,6 @@ def run() -> int:
     if not QSystemTrayIcon.isSystemTrayAvailable():
         print("Error: system tray not available.")
         return 1
-    _inst = MacCleanerApp(app)  # applies stylesheet from Settings inside __init__
+    request_permission()          # ask for UserNotifications permission on first launch
+    _inst = MacCleanerApp(app)    # applies stylesheet from Settings inside __init__
     return app.exec()

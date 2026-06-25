@@ -23,6 +23,7 @@ from ..scanners.homebrew_scanner import HomebrewCacheScanner
 from ..scanners.node_modules_scanner import NodeModulesScanner
 from ..scanners.venv_scanner import VenvScanner
 from ..scanners.xcode_scanner import XcodeScanner
+from ..scanners.duplicate_scanner import DuplicateScanner
 
 ProgressCallback = Callable[[Category, int, int], None]
 
@@ -47,6 +48,7 @@ class CleanerService:
             VenvScanner(self._home),
             HomebrewCacheScanner(self._home),
             NodeModulesScanner(self._home),
+            DuplicateScanner(),
         ]
 
     def scan(self, on_progress: ProgressCallback | None = None) -> ScanReport:

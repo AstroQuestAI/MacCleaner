@@ -16,3 +16,4 @@ class Category(str, Enum):
     UNUSED_VENVS = "Unused Venvs"
     HOMEBREW_CACHE = "Homebrew Cache"
     UNUSED_NODE_MODULES = "Unused node_modules"
+    DUPLICATES = "Duplicate Files"

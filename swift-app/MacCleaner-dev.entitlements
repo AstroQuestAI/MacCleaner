@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- App Sandbox OFF for a system utility that reads ~/Library, /var/log etc. -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+    <!-- Read/write user-selected files for scanning and cleaning -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    <!-- Read/write Downloads for cleaning -->
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    <!-- NOTE: com.apple.developer.siri requires a real Developer ID certificate.
+         Add it back only when signing with an enrolled Apple Developer certificate. -->
+</dict>
+</plist>

@@ -1,3 +1,13 @@
+# PyInstaller build outputs
+build/
+dist/*.dmg
+dist/MacCleaner/
+dist/MacCleaner.app/
+
+# Swift build artifacts
+swift-app/.build/
+swift-ai/maccleaner-ai
+
 # Python
 __pycache__/
 *.py[cod]
