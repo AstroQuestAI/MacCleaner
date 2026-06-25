@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "maccleaner"
+version = "1.0.0"
+description = "macOS storage cleaner — removes clutter and improves performance"
+requires-python = ">=3.11"
+dependencies = [
+    "rich>=13.0",
+    "send2trash>=1.8",
+    "psutil>=5.9",
+    "PySide6>=6.6",
+    "pyobjc-framework-Cocoa>=10.0; sys_platform == 'darwin'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pytest-mock>=3.14",
+]
+
+[project.scripts]
+maccleaner = "maccleaner.ui.cli:main"
+maccleaner-gui = "maccleaner.ui.menubar.app:run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=maccleaner --cov-report=term-missing -v"
+
+[tool.coverage.run]
+source = ["src/maccleaner"]

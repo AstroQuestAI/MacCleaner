@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.maccleaner.agent</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/crazeelambo/MacCleaner/.venv/bin/maccleaner-gui</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+
+    <!-- Start automatically at login -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Restart if it crashes -->
+    <key>KeepAlive</key>
+    <true/>
+
+    <!-- Log output to /tmp for debugging; harmless when running normally -->
+    <key>StandardOutPath</key>
+    <string>/tmp/maccleaner.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/maccleaner-err.log</string>
+</dict>
+</plist>
