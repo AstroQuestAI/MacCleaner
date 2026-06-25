@@ -16,6 +16,9 @@ from PySide6.QtWidgets import (
 )
 
 from ...config import Settings
+from .style import THEME_NAMES
+
+_THEME_KEYS = {v: k for k, v in THEME_NAMES.items()}
 
 
 class SettingsPanel(QWidget):
@@ -48,7 +51,7 @@ class SettingsPanel(QWidget):
         # ── Appearance
         v.addWidget(self._section_label("🎨  Appearance"))
         v.addWidget(self._card([
-            self._combo_row("Theme",       ["Glass", "Dark"],              "_theme"),
+            self._combo_row("Theme",       list(THEME_NAMES.values()),      "_theme"),
             self._combo_row("Tray shows",  ["Free space", "Disk used %"], "_tray"),
             self._slider_row("Opacity",    70, 100,                        "_opacity"),
         ]))
@@ -143,7 +146,7 @@ class SettingsPanel(QWidget):
         combo.setObjectName("SettingsCombo")
         for opt in options:
             combo.addItem(opt)
-        combo.setFixedWidth(132)
+        combo.setFixedWidth(152)
         h.addWidget(combo)
         setattr(self, attr, combo)
         return w
@@ -177,7 +180,7 @@ class SettingsPanel(QWidget):
 
     def _load_values(self) -> None:
         s = self._settings
-        self._theme.setCurrentIndex(0 if s.theme == "glass" else 1)
+        self._theme.setCurrentText(THEME_NAMES.get(s.theme, "Midnight Navy"))
         self._tray.setCurrentIndex(0 if s.tray_label == "free" else 1)
         self._opacity_slider.setValue(s.opacity)
         self._opacity_val.setText(f"{s.opacity}%")
@@ -200,7 +203,7 @@ class SettingsPanel(QWidget):
 
     def _on_save(self) -> None:
         s = self._settings
-        s.theme     = "glass" if self._theme.currentIndex() == 0 else "dark"
+        s.theme     = _THEME_KEYS.get(self._theme.currentText(), "glass")
         s.tray_label = "free" if self._tray.currentIndex() == 0 else "pct"
         s.opacity   = self._opacity_slider.value()
 
