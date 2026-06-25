@@ -253,12 +253,3 @@ struct StorageTabView: View {
     }
 }
 
-// MARK: - Settings tab (stub)
-
-struct SettingsTabView: View {
-    var body: some View {
-        Text("Settings coming soon")
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-}

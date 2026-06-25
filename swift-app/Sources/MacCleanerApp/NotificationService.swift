@@ -70,6 +70,11 @@ final class NotificationService {
 
     private var scanTimer: DispatchSourceTimer?
 
+    func stopAutoScanTimer() {
+        scanTimer?.cancel()
+        scanTimer = nil
+    }
+
     func startAutoScanTimer(intervalHours: Int = 2) {
         scanTimer?.cancel()
         let source = DispatchSource.makeTimerSource(queue: .global(qos: .background))
