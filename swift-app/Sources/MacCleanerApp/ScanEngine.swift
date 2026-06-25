@@ -27,6 +27,15 @@ struct CleanData {
     let movedCount: Int
 }
 
+struct FolderNode: Identifiable {
+    let id = UUID()
+    let url: URL
+    let name: String
+    let sizeMB: Double
+    let displayPath: String
+    var children: [FolderNode]
+}
+
 struct EngineResponse<T> {
     let status:  String
     let data:    T?
@@ -51,5 +60,9 @@ actor ScanEngine {
     func clean(paths: [String]) async -> EngineResponse<CleanData>? {
         let data = await NativeEngine.shared.runClean(paths: paths)
         return EngineResponse(status: "ok", data: data, message: nil)
+    }
+
+    func largeFolders() async -> [FolderNode] {
+        await NativeEngine.shared.largeFolders()
     }
 }

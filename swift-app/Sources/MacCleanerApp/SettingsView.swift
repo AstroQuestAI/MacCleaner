@@ -18,6 +18,7 @@ private enum Key {
 
 struct SettingsTabView: View {
 
+    @AppStorage("themeKey")          private var themeKey       = "glass"
     @AppStorage(Key.trayLabel)       private var trayLabel      = "free"
     @AppStorage(Key.autoScan)        private var autoScan       = true
     @AppStorage(Key.scanIntervalH)   private var scanIntervalH  = 2
@@ -36,6 +37,7 @@ struct SettingsTabView: View {
 
                 // ── Appearance ─────────────────────────────────────────────
                 SettingsSection(title: "Appearance") {
+                    ThemePickerRow(themeKey: $themeKey)
                     PickerRow(label: "Menu bar shows",
                               selection: $trayLabel,
                               options: [("free", "Free space GB"), ("pct", "Used %")])
@@ -120,7 +122,6 @@ struct SettingsTabView: View {
                         Label("Save Settings", systemImage: "square.and.arrow.down")
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(.purple)
                 }
                 .padding(.top, 4)
             }
@@ -179,6 +180,33 @@ private struct ToggleRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+        Divider().padding(.leading, 14)
+    }
+}
+
+private struct ThemePickerRow: View {
+    @Binding var themeKey: String
+
+    var body: some View {
+        HStack {
+            Text("Theme").font(.callout)
+            Spacer()
+            Picker("", selection: $themeKey) {
+                ForEach(appThemes) { t in
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(t.accent)
+                            .frame(width: 10, height: 10)
+                        Text(t.name)
+                    }
+                    .tag(t.key)
+                }
+            }
+            .pickerStyle(.menu)
+            .fixedSize()
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
         Divider().padding(.leading, 14)
     }
 }

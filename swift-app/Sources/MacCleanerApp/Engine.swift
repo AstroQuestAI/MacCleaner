@@ -63,6 +63,46 @@ actor NativeEngine {
         )
     }
 
+    // MARK: Large folders
+
+    func largeFolders() -> [FolderNode] {
+        let topNames = [
+            "Library", "Documents", "Downloads", "Desktop",
+            "Movies", "Music", "Pictures", "Developer",
+            "Projects", "repos", "code", "workspace", "src",
+        ]
+        var nodes: [FolderNode] = []
+        for name in topNames {
+            let dir = home.appendingPathComponent(name)
+            guard urlExists(dir), isDir(dir) else { continue }
+            let sizeMB = Double(recursiveSize(dir)) / 1_000_000
+            guard sizeMB >= 100 else { continue }
+            let children = buildFolderChildren(of: dir, depth: 1, maxDepth: 3)
+            let rel = "~/" + name
+            nodes.append(FolderNode(url: dir, name: name, sizeMB: sizeMB, displayPath: rel, children: children))
+        }
+        return nodes.sorted { $0.sizeMB > $1.sizeMB }
+    }
+
+    private func buildFolderChildren(of dir: URL, depth: Int, maxDepth: Int) -> [FolderNode] {
+        guard depth <= maxDepth,
+              let entries = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
+        else { return [] }
+        let homePath = home.path
+        var children: [FolderNode] = []
+        for entry in entries where isDir(entry) && !entry.lastPathComponent.hasPrefix(".") {
+            let sizeMB = Double(recursiveSize(entry)) / 1_000_000
+            guard sizeMB >= 50 else { continue }
+            let sub = depth < maxDepth ? buildFolderChildren(of: entry, depth: depth + 1, maxDepth: maxDepth) : []
+            let rel = entry.path.hasPrefix(homePath + "/")
+                ? "~" + String(entry.path.dropFirst(homePath.count))
+                : entry.path
+            children.append(FolderNode(url: entry, name: entry.lastPathComponent,
+                                       sizeMB: sizeMB, displayPath: rel, children: sub))
+        }
+        return Array(children.sorted { $0.sizeMB > $1.sizeMB }.prefix(8))
+    }
+
     // MARK: Scan
 
     func runScan(categories: [String]? = nil) -> ScanData {
@@ -88,7 +128,6 @@ actor NativeEngine {
         for scanner in scanners {
             if let filter = categories, !filter.contains(scanner.categoryName) { continue }
             let paths = scanner.findPaths()
-            guard !paths.isEmpty else { continue }
             let totalBytes = paths.reduce(Int64(0)) { $0 + recursiveSize($1) }
             results.append(ScanCategory(
                 category: scanner.categoryName,
@@ -98,9 +137,10 @@ actor NativeEngine {
             ))
         }
 
-        // Docker: special case — not file-path-based
+        // Docker: always included even if nothing reclaimable
         if categories == nil || categories?.contains("Docker") == true {
-            if let docker = DockerScanner().scan() { results.append(docker) }
+            let docker = DockerScanner().scan() ?? ScanCategory(category: "Docker", count: 0, sizeMB: 0, paths: [])
+            results.append(docker)
         }
 
         let totalGB    = results.reduce(0.0) { $0 + $1.sizeMB } / 1000.0
@@ -291,22 +331,16 @@ private struct NodeModulesScanner: FileScanner {
     let home: URL
     let categoryName = "Unused node_modules"
     private let unusedDays: Double = 30
-
-    private let searchRoots = [
-        "Projects", "Developer", "code", "repos", "workspace",
-        "Documents", "Desktop", "Downloads", "Sites", "src",
-    ]
+    private let skipDirs: Set<String> = ["Library", "Applications"]
 
     func findPaths() -> [URL] {
+        guard let topDirs = try? fm.contentsOfDirectory(at: home, includingPropertiesForKeys: nil)
+        else { return [] }
         var found: [URL] = []
-        for rootName in searchRoots {
-            let root = home.appendingPathComponent(rootName)
-            guard urlExists(root),
-                  let projects = try? fm.contentsOfDirectory(at: root, includingPropertiesForKeys: nil)
-            else { continue }
-            for project in projects where isDir(project) {
-                found.append(contentsOf: findNM(in: project, depth: 4))
-            }
+        for dir in topDirs where isDir(dir)
+                               && !dir.lastPathComponent.hasPrefix(".")
+                               && !skipDirs.contains(dir.lastPathComponent) {
+            found.append(contentsOf: findNM(in: dir, depth: 5))
         }
         return found
     }
@@ -433,34 +467,37 @@ private struct VenvScanner: FileScanner {
     let categoryName = "Unused Venvs"
     private let unusedDays: Double = 60
     private let venvNames: Set<String> = [".venv", "venv", "env", ".env", "virtualenv"]
-    private let searchRoots = [
-        "Projects", "Developer", "code", "repos", "workspace",
-        "Documents", "Desktop", "Sites", "src",
-    ]
+    private let skipDirs: Set<String> = ["Library", "Applications"]
 
     func findPaths() -> [URL] {
+        guard let topDirs = try? fm.contentsOfDirectory(at: home, includingPropertiesForKeys: nil)
+        else { return [] }
         var found: [URL] = []
-        for rootName in searchRoots {
-            let root = home.appendingPathComponent(rootName)
-            guard urlExists(root),
-                  let projects = try? fm.contentsOfDirectory(at: root, includingPropertiesForKeys: nil) else { continue }
-            for project in projects where isDir(project) {
-                found.append(contentsOf: scanProject(project))
-            }
+        for dir in topDirs where isDir(dir)
+                               && !dir.lastPathComponent.hasPrefix(".")
+                               && !skipDirs.contains(dir.lastPathComponent) {
+            found.append(contentsOf: findVenvs(in: dir, depth: 5))
         }
         return found
     }
 
-    private func scanProject(_ project: URL) -> [URL] {
-        let mtime = (try? project.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
-        guard Date().timeIntervalSince(mtime) / 86400 >= unusedDays else { return [] }
-        guard let children = try? fm.contentsOfDirectory(at: project, includingPropertiesForKeys: nil) else { return [] }
-        return children.compactMap { child -> URL? in
-            guard venvNames.contains(child.lastPathComponent), isDir(child) else { return nil }
-            let hasPy = fm.fileExists(atPath: child.appendingPathComponent("bin/python").path) ||
-                        fm.fileExists(atPath: child.appendingPathComponent("bin/python3").path)
-            return hasPy ? child : nil
+    private func findVenvs(in dir: URL, depth: Int) -> [URL] {
+        guard depth > 0,
+              let children = try? fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.contentModificationDateKey])
+        else { return [] }
+        var results: [URL] = []
+        for child in children where isDir(child) {
+            if venvNames.contains(child.lastPathComponent) {
+                let hasPy = fm.fileExists(atPath: child.appendingPathComponent("bin/python").path) ||
+                            fm.fileExists(atPath: child.appendingPathComponent("bin/python3").path)
+                guard hasPy else { continue }
+                let mtime = (try? dir.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date()
+                if Date().timeIntervalSince(mtime) / 86400 >= unusedDays { results.append(child) }
+            } else {
+                results.append(contentsOf: findVenvs(in: child, depth: depth - 1))
+            }
         }
+        return results
     }
 }
 
