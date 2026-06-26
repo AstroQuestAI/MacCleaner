@@ -17,9 +17,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var splashWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Hide from Dock
-        NSApp.setActivationPolicy(.accessory)
-
         // Request notification permission once
         NotificationService.shared.requestPermission()
 
@@ -29,13 +26,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Kick off first storage check
         Task { await menuBar?.refreshStorage() }
 
-        // Show splash screen on launch
+        // Show splash as a regular (non-UIElement) app so it can come to front.
+        // setActivationPolicy(.accessory) is deferred until the splash closes.
+        NSApp.activate(ignoringOtherApps: true)
         showSplash()
     }
 
     private func showSplash() {
         let w = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 380, height: 300),
+            contentRect: NSRect(x: 0, y: 0, width: 520, height: 400),
             styleMask: [.borderless],
             backing: .buffered,
             defer: false
@@ -44,15 +43,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         w.isOpaque = false
         w.hasShadow = true
         w.level = .floating
+        w.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         w.isMovableByWindowBackground = true
         w.center()
 
         let view = SplashView {
             self.splashWindow?.orderOut(nil)
             self.splashWindow = nil
+            // Now that splash is gone, retreat to menu-bar-only mode
+            NSApp.setActivationPolicy(.accessory)
         }
-        w.contentViewController = NSHostingController(rootView: view)
+        let hosting = NSHostingController(rootView: view)
+        hosting.view.frame = NSRect(x: 0, y: 0, width: 520, height: 400)
+        w.contentViewController = hosting
+        w.setContentSize(NSSize(width: 520, height: 400))
+        w.center()
         w.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
         splashWindow = w
     }
 }
