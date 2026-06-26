@@ -89,6 +89,9 @@ struct SettingsTabView: View {
                                         ("90","90%"),("95","95%")])
                 }
 
+                // ── Permissions ────────────────────────────────────────────
+                FullDiskAccessBanner()
+
                 // ── Scan ───────────────────────────────────────────────────
                 SettingsSection(title: "Scan") {
                     ToggleRow(label: "Scan node_modules folders",
@@ -138,6 +141,46 @@ struct SettingsTabView: View {
                 svc.stopAutoScanTimer()
             }
         }
+    }
+}
+
+// MARK: - Full Disk Access Banner
+
+private struct FullDiskAccessBanner: View {
+    @State private var hasAccess: Bool = false
+
+    var body: some View {
+        if !hasAccess {
+            HStack(spacing: 10) {
+                Image(systemName: "lock.trianglebadge.exclamationmark.fill")
+                    .foregroundStyle(.orange)
+                    .font(.system(size: 16))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Full Disk Access needed for Trash")
+                        .font(.system(size: 12, weight: .semibold))
+                    Text("Grant access in System Settings to scan Trash.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button("Open Settings") {
+                    NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")!)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+            }
+            .padding(12)
+            .background(.orange.opacity(0.08))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(.orange.opacity(0.25), lineWidth: 1))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.horizontal, 14)
+            .onAppear { checkAccess() }
+        }
+    }
+
+    private func checkAccess() {
+        let trash = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".Trash")
+        hasAccess = (try? FileManager.default.contentsOfDirectory(at: trash, includingPropertiesForKeys: nil)) != nil
     }
 }
 

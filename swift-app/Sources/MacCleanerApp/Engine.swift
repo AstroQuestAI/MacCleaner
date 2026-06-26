@@ -277,9 +277,17 @@ private struct TrashScanner: FileScanner {
     let categoryName = "Trash"
 
     func findPaths() -> [URL] {
+        // Try the standard path first
         let trash = home.appendingPathComponent(".Trash")
-        guard let entries = try? fm.contentsOfDirectory(at: trash, includingPropertiesForKeys: nil) else { return [] }
-        return entries.filter { $0.lastPathComponent != ".DS_Store" }
+        if let entries = try? fm.contentsOfDirectory(at: trash, includingPropertiesForKeys: [.fileSizeKey, .isDirectoryKey]) {
+            return entries.filter { $0.lastPathComponent != ".DS_Store" }
+        }
+        // Fall back to FileManager API (works with Full Disk Access)
+        if let trashURL = try? fm.url(for: .trashDirectory, in: .userDomainMask, appropriateFor: nil, create: false),
+           let entries = try? fm.contentsOfDirectory(at: trashURL, includingPropertiesForKeys: [.fileSizeKey, .isDirectoryKey]) {
+            return entries.filter { $0.lastPathComponent != ".DS_Store" }
+        }
+        return []
     }
 }
 
